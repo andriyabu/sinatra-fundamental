@@ -1,5 +1,6 @@
 require 'sinatra'
 
+enable :sessions
 
 get '/' do
     "<h1> omg, welcome to sinatra </h1>"
@@ -44,11 +45,24 @@ def store_name(filename, string)
     end
 end
 
+def read_names
+    return [] unless File.exists?("name.txt")
+    File.read("name.txt").split("\n")    
+end
+
 get '/product' do
     # p params
+    @message = session.delete(:message)
+    @name = params[:name]
+    @names = read_names
+    erb :product, {:layout => :layout}
+end
+
+post '/product' do
     @name = params[:name]
     store_name("name.txt",@name)
-    erb :product, {:layout => :layout}
+    session[:message] = "Successfully stored the name #{@name}"
+    redirect "/product?name=#{@name}"
 end
 
 get '/signup' do
