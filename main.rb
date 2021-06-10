@@ -1,6 +1,35 @@
 require 'sinatra'
 
+
 enable :sessions
+
+class NameValidator
+
+    def initialize(name, names)
+        @name = name.to_s
+        @names = names
+    end
+
+    def valid?
+        validate
+        @message.nil?
+    end
+
+    def message
+        @message
+    end      
+    
+    private
+
+    def validate
+        if @name.empty?
+          @message = "You need to enter a name."
+        elsif @names.include?(@name)
+          @message = "#{@name} is already included in our list."
+        end
+    end
+end
+
 
 get '/' do
     "<h1> omg, welcome to sinatra </h1>"
@@ -60,9 +89,31 @@ end
 
 post '/product' do
     @name = params[:name]
-    store_name("name.txt",@name)
-    session[:message] = "Successfully stored the name #{@name}"
-    redirect "/product?name=#{@name}"
+    @names = read_names
+    validator = NameValidator.new(@name, @names)
+
+    if validator.valid?
+        store_name("name.txt",@name)
+        session[:message] = "Successfully stored the name #{@name}"
+        redirect "/product?name=#{@name}"
+    else
+        # session[:message] = validator.message
+        @message = validator.message
+        erb :product, {:layout => :layout}
+    end
+    # cek if @name is empty
+    # if @name.nil? or @name.empty?
+    #     session[:message] = "You need to enter a name"
+    # check if name already in the file list
+    # elsif read_names.include?(@name)
+    #     session[:message] = "#{@name} is already include in our list"
+    # else
+        # store the @name on the file and create a session
+    #     store_name("name.txt",@name)
+    #     session[:message] = "Successfully stored the name #{@name}"
+    # end
+
+    
 end
 
 get '/signup' do
