@@ -5,22 +5,22 @@ get '/' do
     "<h1> omg, welcome to sinatra </h1>"
 end
 
-get '/product/:name' do
+# get '/product/:name' do
     
-    # "Nama Product adalah #{params[:nama]}"
-    # params.inspect
-    # ERB.new("<h3> Nama Product adalah  <%= params[:nama] %> </h3>").result(binding)
+#     # "Nama Product adalah #{params[:nama]}"
+#     # params.inspect
+#     # ERB.new("<h3> Nama Product adalah  <%= params[:nama] %> </h3>").result(binding)
 
-    # or
-    # erb "<h3> Nama Product adalah  <%= nama %> </h3>", {:locals => {:nama => params[:name]}}
+#     # or
+#     # erb "<h3> Nama Product adalah  <%= nama %> </h3>", {:locals => {:nama => params[:name]}}
 
-    # or
+#     # or
 
-    erb "<h3> Nama Product adalah  <%= name %> </h3>", {:locals => params }
-end
+#     erb "<h3> Nama Product adalah  <%= name %> </h3>", {:locals => params }
+# end
 
 # using layout and template
-get '/category/:name' do
+get '/product/:name' do
     # template = "<h1 style='color: red'> Category name <%= name %> </h1>"
     # layout = %(
     #     <html>
@@ -35,7 +35,20 @@ get '/category/:name' do
     # instanse variable
     @name = params[:name]
     
-    erb :index, {:layout => :layout, :locals =>params}
+    erb :show_product, {:layout => :layout, :locals =>params}
+end
+
+def store_name(filename, string)
+    File.open(filename, "a+") do |file|
+        file.puts(string)
+    end
+end
+
+get '/product' do
+    # p params
+    @name = params[:name]
+    store_name("name.txt",@name)
+    erb :product, {:layout => :layout}
 end
 
 get '/signup' do
