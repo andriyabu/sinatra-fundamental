@@ -32,6 +32,8 @@ get '/category/:name' do
     #     </body>
     #     </html>
     # )
+    # instanse variable
+    @name = params[:name]
     
     erb :index, {:layout => :layout, :locals =>params}
 end
